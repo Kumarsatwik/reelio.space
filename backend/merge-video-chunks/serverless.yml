@@ -1,0 +1,41 @@
+org: kumarsatwik
+service: upload-trigger
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${file(config.json):STAGE}
+  region: ${file(config.json):REGION}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:ListBucket
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+      Resource:
+        - arn:aws:s3:::${file(config.json):S3_BUCKET}/*
+custom:
+  bucketName: k-video-upload-bucket
+  serverless-offline:
+    httpPort: 5000
+
+functions:
+  mergeVideoChunks:
+    handler: handler.handler
+    events:
+      - s3:
+          bucket: ${file(config.json):S3_BUCKET}
+          event: s3:ObjectCreated:*
+          existing: true
+          rules:
+            - suffix: [".chunk"]
+
+resources:
+  Resources:
+    s3WithLambda:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${file(config.json):S3_BUCKET}
+
+plugins:
+  - serverless-offline
