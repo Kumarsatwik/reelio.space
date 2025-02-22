@@ -39,13 +39,6 @@ export default function Sidebar() {
     }
   };
 
-  // Redirect if not authenticated
-  React.useEffect(() => {
-    if (!isAuthenticated || !user) {
-      router.push("/login");
-    }
-  }, [isAuthenticated, user, router]);
-
   // if (!isAuthenticated || !user) {
   //   return null; // Don't render sidebar if not authenticated
   // }

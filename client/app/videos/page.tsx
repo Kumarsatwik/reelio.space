@@ -1,7 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import api from "@/services/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
@@ -12,36 +10,13 @@ import {
 import { VideoIcon } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
-import VideoCard from "../(components)/VideoCard";
-
-interface Video {
-  videoId: string;
-  title: string;
-  description: string;
-  status: string;
-  url: string;
-  thumbnail?:string;
-  channelName?: string;
-  createdAt: string;
-}
+import { useUserVideos } from "@/hooks/use-video";
+import VideoCard from "@/components/VideoCard";
+import Loader from "@/components/Loader";
 
 export default function VideosPage() {
   const { user } = useAuthStore();
-
-  const {
-    data: videos,
-    isLoading,
-    error,
-  } = useQuery<Video[]>({
-    queryKey: ["userVideos", user?.userId],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data } = await api.get(`/videos/user/${user?.userId}`);
-      console.log("data", data);
-      return data;
-    },
-    enabled: !!user
-  });
+  const { videos, isLoading, error } = useUserVideos(user?.userId);
 
   // Now handle the rendering logic after hooks
   if (!user) {
@@ -59,13 +34,7 @@ export default function VideosPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {[...Array(6)].map((_, i) => (
-          <Skeleton key={i} className="h-[200px] w-full rounded-lg" />
-        ))}
-      </div>
-    );
+    <Loader />;
   }
 
   if (error) {
@@ -93,14 +62,14 @@ export default function VideosPage() {
       {videos.map((video) => (
         <Link key={video.videoId} href={`/watch/${video.videoId}`}>
           <VideoCard
-          key={video.videoId}
-          id={video.videoId}
-          title={video.title}
-          thumbnail={video.thumbnail || "/placeholder.svg"}
-          channelName={video.channelName || "Unknown"}
-          views={0}
-          uploadDate={video.createdAt}
-        />
+            key={video.videoId}
+            id={video.videoId}
+            title={video.title}
+            thumbnail={video.thumbnail || "/placeholder.svg"}
+            channelName={video.channelName || "Unknown"}
+            views={0}
+            uploadDate={video.createdAt}
+          />
         </Link>
       ))}
     </div>

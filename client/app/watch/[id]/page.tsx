@@ -1,37 +1,16 @@
 "use client";
-import VideoPlayer from "../../(components)/VideoPlayer";
-import { useQuery } from "@tanstack/react-query";
-import api from "@/services/api";
-import { useParams } from "next/navigation";
 
-interface Video {
-  videoId: string;
-  title: string;
-  description: string;
-  status: string;
-  inputPath: string;
-  outputPath: string;
-  createdAt: string;
-}
+import Loader from "@/components/Loader";
+import VideoPlayer from "@/components/VideoPlayer";
+import { useVideo } from "@/hooks/use-video";
+import { useParams } from "next/navigation";
 
 export default function WatchPage() {
   const params = useParams();
-
-  const {
-    data: video,
-    isLoading,
-    error,
-  } = useQuery<Video>({
-    queryKey: ["video", params.id],
-    queryFn: async () => {
-      const { data } = await api.get(`/videos/${params.id}`);
-      console.log("data", data);
-      return data;
-    },
-  });
+  const { video, isLoading, error } = useVideo(params.id as string);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    <Loader />;
   }
 
   if (error || !video) {

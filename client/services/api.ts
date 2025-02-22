@@ -21,14 +21,20 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Call logout mutation to properly clear auth state'
-      const { logout } = useAuth();
+      console.log('401')
+      // Clear auth state and cookies
+      useAuthStore.getState().setUser(null);
+      removeCookies();
+      
+      // Call logout endpoint to clear server-side session
       try {
-        logout.mutate();
-      } finally {
-        useAuthStore.getState().setUser(null);
-        removeCookies();
+        await api.post("/auth/logout");
+      } catch (logoutError) {
+        console.error("Logout failed:", logoutError);
       }
+
+      // Redirect to login page
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

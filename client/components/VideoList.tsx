@@ -2,8 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import api from '@/services/api';
-import { Skeleton } from '@/components/ui/skeleton';
 import VideoCard from './VideoCard';
+import Loader from './Loader';
 
 interface Video {
   videoId: string;
@@ -25,18 +25,13 @@ export default function VideoList() {
     queryKey: ["userVideos"],
     queryFn: async () => {
       const { data } = await api.get(`/videos`);
-      console.log("data", data);
       return data;
     },
   });
 
   if (isLoading) {
     return (
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {[...Array(6)].map((_, i) => (
-          <Skeleton key={i} className="h-[200px] w-full rounded-lg" />
-        ))}
-      </div>
+      <Loader/>
     );
   }
 
