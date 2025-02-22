@@ -1,0 +1,11 @@
+{
+    "ECS_CLUSTER": "",
+    "TASK_DEFINITION": "",
+    "SECURITY_GROUPS": "",
+    "SUBNETS": "",
+    "REGION": "",
+    "SQS_QUEUE_URL": "",
+    "QUEUE_NAME": "",
+    "IS_OFFLINE": true
+  }
+  

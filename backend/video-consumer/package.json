@@ -1,0 +1,30 @@
+{
+  "name": "video-consumer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "serverless offline start",
+    "deploy": "serverless deploy --aws-profile lit --region us-east-1",
+    "sqs:start": "docker run -p 9324:9324 -p 9325:9325 softwaremill/elasticmq",
+    "test:local": "serverless invoke local --function processVideo --path event.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-ecr": "^3.734.0",
+    "@aws-sdk/client-ecs": "^3.750.0",
+    "@aws-sdk/client-sqs": "^3.750.0",
+    "@serverless/utils": "^6.15.0",
+    "@upstash/redis": "^1.34.4",
+    "aws-lambda": "^1.0.7",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "serverless": "^4.6.3",
+    "serverless-offline": "^14.4.0",
+    "serverless-offline-sqs": "^8.0.0"
+  }
+}

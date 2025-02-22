@@ -1,0 +1,80 @@
+service: video-transcoding-consumer
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${file(config.json):REGION}
+  environment:
+    CLUSTER: ${file(config.json):ECS_CLUSTER}
+    TASK_DEFINITION: ${file(config.json):TASK_DEFINITION}
+    SECURITY_GROUPS: ${file(config.json):SECURITY_GROUPS}
+    SUBNETS: ${file(config.json):SUBNETS}
+    SQS_QUEUE_URL: ${file(config.json):SQS_QUEUE_URL}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ecs:RunTask
+            - ecs:ListTasks
+            - ecs:DescribeTasks
+          Resource: 
+            - Fn::Sub: arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:task-definition/${file(config.json):TASK_DEFINITION}
+            - Fn::Sub: arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:cluster/${file(config.json):ECS_CLUSTER}
+        - Effect: Allow
+          Action:
+            - iam:PassRole
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource: 
+            Fn::GetAtt: [VideoQueue, Arn]
+          
+functions:
+  processVideo:
+    handler: lambda.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [VideoQueue, Arn]
+          batchSize: 1
+          enabled: true
+
+resources:
+  Resources:
+    VideoQueue:
+      Type: AWS::SQS::Queue
+      DeletionPolicy: Delete
+      Properties:
+        QueueName: ${file(config.json):QUEUE_NAME}
+        VisibilityTimeout: 60
+    
+    # VideoQueueDLQ:
+    #   Type: AWS::SQS::Queue
+    #   Properties:
+    #     QueueName: video-transcoding-dlq
+
+custom:
+  serverless-offline-sqs:
+    autoCreate: true
+    apiVersion: "2012-11-05"
+    endpoint: http://localhost:9324
+    region: ${self:provider.region}
+    accessKeyId: root
+    secretAccessKey: root
+    skipCacheInvalidation: false
+    queues:
+      - name: ${file(config.json):QUEUE_NAME}
+        url: http://localhost:9324/queue/${file(config.json):QUEUE_NAME}
+
+plugins:
+  - serverless-offline
+  - serverless-offline-sqs
+
+
