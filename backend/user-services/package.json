@@ -23,6 +23,7 @@
     "cors": "^2.8.x",
     "dotenv": "^16.x",
     "express": "^4.x",
+    "express-rate-limit": "^7.5.0",
     "fluent-ffmpeg": "^2.1.3",
     "jsonwebtoken": "^9.0.2",
     "kafkajs": "^2.2.4",

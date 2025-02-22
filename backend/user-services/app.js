@@ -3,9 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import { rateLimit } from 'express-rate-limit'
 import User from "./models/User.js";
 import { Video } from "./models/Video.js";
-import { Comment } from "./models/Comment.js";
+// import { Comment } from "./models/Comment.js";
 import uploadRoutes from "./routes/upload.js";
 
 import authRoutes from "./routes/auth.js";
@@ -13,6 +14,15 @@ import videoRoutes from "./routes/video.js"; // Update this import
 
 // Load environment variables
 dotenv.config();
+
+
+// Define rate limiter (Example: max 100 requests per 15 minutes per IP)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+  headers: true, // Send rate limit info in headers
+});
 
 const app = express();
 
@@ -70,6 +80,8 @@ const initializeTables = async () => {
     }
   }
 };
+
+app.use(limiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
