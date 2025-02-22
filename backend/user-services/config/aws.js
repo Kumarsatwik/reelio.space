@@ -32,8 +32,6 @@ export const generatePresignedUrl = async (fileName, fileType) => {
     ContentType: fileType,
   };
 
-  console.log("Presigned URL Params:", params);
-
   try {
     const command = new PutObjectCommand(params);
     const url = await getSignedUrl(s3, command, { expiresIn: 300 });

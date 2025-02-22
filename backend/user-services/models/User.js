@@ -47,7 +47,6 @@ export class User extends BaseModel {
   }
 
   async findUserById(userId) {
-    console.log('userId',userId)
     try {
       const result = await super.query({
         TableName: this.tableName, // Explicitly specify table name
@@ -58,7 +57,6 @@ export class User extends BaseModel {
         },
       });
 
-      console.log("UserId result:", result);
 
       return result.length > 0 ? result[0] : null; // Properly return user
     } catch (error) {

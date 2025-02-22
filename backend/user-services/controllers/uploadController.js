@@ -60,12 +60,7 @@ export const completeUpload = async (req, res) => {
         const videoId = uuidv4();
         const { title, description, userId } = req.body;
         
-        console.log('completeUpload',{
-            title,
-            description,
-            thumbnail: req.file,
-            userId
-        })
+        
 
         if (!title || !description || !userId || !req.file) {
             return res.status(400).json({ error: "Missing required fields or thumbnail" });

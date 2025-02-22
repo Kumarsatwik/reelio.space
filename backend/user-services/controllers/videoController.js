@@ -78,13 +78,13 @@ export const getUserVideos = async (req, res) => {
 
 export const getVideoById = async (req, res) => {
   try {
-    console.log("req.params.videoId", req.params.videoId);
+    
     const video = await videoModel.findById(req.params.videoId);
     if (!video) {
       return res.status(404).json({ error: "Video not found" });
     }
 
-    console.log("video", video);
+    
 
     if (video.userId !== req.user.userId) {
       return res.status(403).json({ error: "Access denied" });

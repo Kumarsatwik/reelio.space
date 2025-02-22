@@ -95,7 +95,7 @@ export class Video extends BaseModel {
     const userDetails = await Promise.all(
       userIds.map(async (userId) => {
         const user = await userModel.findUserById(userId);
-        console.log('user',user)
+        
         if (!user) {
           return {
             userId,

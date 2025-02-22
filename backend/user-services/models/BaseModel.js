@@ -15,7 +15,7 @@ import {
 import { dynamoDB, docClient } from "../config/aws.config.js";
 
 export class BaseModel {
-  constructor(tableName, sensitiveFields = ['password']) {
+  constructor(tableName, sensitiveFields = ["password"]) {
     this.tableName = tableName;
     this.sensitiveFields = sensitiveFields;
   }
@@ -23,10 +23,9 @@ export class BaseModel {
   _removeSensitiveFields(item) {
     if (!item) return item;
     const sanitizedItem = { ...item };
-    this.sensitiveFields.forEach(field => delete sanitizedItem[field]);
+    this.sensitiveFields.forEach((field) => delete sanitizedItem[field]);
     return sanitizedItem;
   }
-
 
   async deleteTableIfExists() {
     try {
@@ -79,13 +78,13 @@ export class BaseModel {
 
   async get(key) {
     try {
-      console.log("Getting item with key:", key,this.tableName);
+      
       const command = new GetCommand({
         TableName: this.tableName,
         Key: key,
       });
       const result = await docClient.send(command);
-      return this._removeSensitiveFields(result.Item);
+      return result.Item;
     } catch (error) {
       console.error("Error in get operation:", error);
       throw error;
@@ -96,16 +95,16 @@ export class BaseModel {
     try {
       const command = new ScanCommand({
         TableName: this.tableName,
-        FilterExpression: '#status = :status',
+        FilterExpression: "#status = :status",
         ExpressionAttributeNames: {
-          '#status': 'status'
+          "#status": "status",
         },
         ExpressionAttributeValues: {
-          ':status': "completed"
-        }
+          ":status": "completed",
+        },
       });
       const result = await docClient.send(command);
-      return result.Items.map(item => this._removeSensitiveFields(item));
+      return result.Items.map((item) => this._removeSensitiveFields(item));
     } catch (error) {
       console.error("Error in getAll operation:", error);
       throw error;
@@ -114,7 +113,7 @@ export class BaseModel {
 
   async put(item) {
     try {
-      console.log("Putting item:", item);
+      
       const command = new PutCommand({
         TableName: this.tableName,
         Item: item,
@@ -159,6 +158,8 @@ export class BaseModel {
       TableName: this.tableName,
     });
     const result = await docClient.send(command);
-    return (result.Items || []).map(item => this._removeSensitiveFields(item));
+    return (result.Items || []).map((item) =>
+      this._removeSensitiveFields(item)
+    );
   }
 }
