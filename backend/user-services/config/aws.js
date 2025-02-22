@@ -1,24 +1,27 @@
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
-import AWS from "aws-sdk";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import "dotenv/config";
-// const s3 = new AWS.S3({
-//   accessKeyId: process.env.AWS_ACCESS_KEY,
-//   secretAccessKey: process.env.AWS_SECRET_KEY,
-//   region: process.env.AWS_REGION,
-// });
 
-const s3 = new S3Client({
+const awsConfig = {
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_KEY,
   },
   region: process.env.AWS_REGION,
-});
+};
+
+// Initialize DynamoDB
+const ddbClient = new DynamoDBClient(awsConfig);
+export const dynamoDB = DynamoDBDocumentClient.from(ddbClient);
+
+// Initialize S3
+const s3 = new S3Client(awsConfig);
 
 // Generate Presigned URL
 export const generatePresignedUrl = async (fileName, fileType) => {
@@ -27,7 +30,6 @@ export const generatePresignedUrl = async (fileName, fileType) => {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
     ContentType: fileType,
-    Expires: 60 * 5, // URL expires in 5 minutes
   };
 
   console.log("Presigned URL Params:", params);
@@ -60,16 +62,5 @@ export const uploadChunkToS3 = async (key, chunk, contentType) => {
     throw new Error(`S3 Upload Error: ${error.message}`);
   }
 };
-
-// export const triggerLambdaFunction = async (fileId) => {
-//   const lambda = new AWS.Lambda();
-//   const params = {
-//     FunctionName: "upload-trigger",
-//     Payload: JSON.stringify({ fileId }),
-//   };
-//   console.log("fileId", fileId);
-
-//   await lambda.invoke(params).promise();
-// };
 
 export default s3;
