@@ -11,6 +11,9 @@ interface VideoCardProps {
 }
 
 export default function VideoCard({ id, title, thumbnail, channelName, views, uploadDate }: VideoCardProps) {
+
+  console.log("thumbnail", thumbnail);
+
   return (
     <Link href={`/watch/${id}`} className="group">
       <div className="aspect-video relative rounded-lg overflow-hidden">
@@ -26,7 +29,7 @@ export default function VideoCard({ id, title, thumbnail, channelName, views, up
         <h3 className="text-sm font-medium line-clamp-2">{title}</h3>
         <p className="text-xs text-gray-500 mt-1">{channelName}</p>
         <p className="text-xs text-gray-500">
-          {views.toLocaleString()} views • {uploadDate}
+          {views.toLocaleString()} views • {new Date(uploadDate).toLocaleDateString()}
         </p>
       </div>
     </Link>
