@@ -7,7 +7,6 @@ const authPaths = ["/login", "/signup"];
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token");
-  console.log("token", token);
 
   // Force authentication for protected routes
   if (protectedPaths.some((path) => pathname.startsWith(path))) {
