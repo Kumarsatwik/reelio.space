@@ -22,7 +22,6 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       // Call logout mutation to properly clear auth state'
-      console.log("looking for")
       const { logout } = useAuth();
       try {
         logout.mutate();
