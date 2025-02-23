@@ -33,7 +33,7 @@ export default function Sidebar() {
     } catch (error) {
       console.error("Logout failed:", error);
       // Force logout on error
-      useAuthStore.getState().setUser(null);
+      useAuthStore.getState().setUser(null,null);
       document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
       router.push("/login");
     }

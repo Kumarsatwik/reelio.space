@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Menu, Search, Upload, Bell, User } from 'lucide-react'
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Menu, Search, Upload, Bell, User } from "lucide-react";
 
 export default function Header() {
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // Implement search functionality here
-    console.log('Searching for:', searchQuery)
-  }
+    console.log("Searching for:", searchQuery);
+  };
 
   return (
     <header className="flex items-center justify-between p-4 bg-white border-b">
@@ -22,7 +22,7 @@ export default function Header() {
           <Menu className="h-6 w-6" />
         </Button>
         <Link href="/" className="ml-4 text-xl font-bold">
-          VideoTube
+          Reelio.space
         </Link>
       </div>
       <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-4">
@@ -43,14 +43,15 @@ export default function Header() {
             <Upload className="h-6 w-6" />
           </Button>
         </Link>
-        <Button variant="ghost" size="icon">
+        {/* <Button variant="ghost" size="icon">
           <Bell className="h-6 w-6" />
-        </Button>
-        <Button variant="ghost" size="icon">
-          <User className="h-6 w-6" />
-        </Button>
+        </Button> */}
+        <Link href="/settings">
+          <Button variant="ghost" size="icon">
+            <User className="h-6 w-6" />
+          </Button>
+        </Link>
       </div>
     </header>
-  )
+  );
 }
-
