@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { rateLimit } from 'express-rate-limit'
+import { rateLimit } from "express-rate-limit";
 import User from "./models/User.js";
 import { Video } from "./models/Video.js";
 // import { Comment } from "./models/Comment.js";
@@ -14,7 +14,6 @@ import videoRoutes from "./routes/video.js"; // Update this import
 
 // Load environment variables
 dotenv.config();
-
 
 // Define rate limiter (Example: max 100 requests per 15 minutes per IP)
 const limiter = rateLimit({
@@ -32,7 +31,7 @@ app.use(morgan("dev")); // First middleware to log all requests
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: [process.env.FRONTEND_URL, "http://localhost:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

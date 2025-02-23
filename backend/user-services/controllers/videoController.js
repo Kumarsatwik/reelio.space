@@ -1,5 +1,6 @@
 import { uploadChunkToS3 } from "../config/aws.js";
 import { Video } from "../models/Video.js";
+import sendToQueue from "../services/sendToQueue.js";
 
 const videoModel = new Video();
 
@@ -56,7 +57,6 @@ export const uploadVideo = async (req, res) => {
 export const getVideos = async (req, res) => {
   try {
     const videos = await videoModel.getVideosWithUserDetails();
-    // console.log("videos", videos);
     res.json(videos);
   } catch (error) {
     console.error("Error fetching videos:", error);
@@ -66,7 +66,6 @@ export const getVideos = async (req, res) => {
 
 export const getUserVideos = async (req, res) => {
   try {
-    // Use findByUserId instead of findById
     const videos = await videoModel.findByUserId(req.user.userId);
 
     res.json(videos);
@@ -85,11 +84,6 @@ export const getVideoById = async (req, res) => {
     }
 
     
-
-    if (video.userId !== req.user.userId) {
-      return res.status(403).json({ error: "Access denied" });
-    }
-
     res.json(video);
   } catch (error) {
     console.error("Error fetching video:", error);
@@ -129,3 +123,38 @@ export const deleteVideo = async (req, res) => {
     res.status(500).json({ error: "Failed to delete video" });
   }
 };
+
+
+export const receiveEvents = async(req,res)=>{
+  try{
+    const { videoId, userId, eventType } = req.body;
+    if (!userId || !videoId || !["like", "view", "subscribe"].includes(eventType)) {
+      return res.status(400).json({ message: "Invalid request data" });
+    }
+    const event = {
+      videoId,
+      userId,
+      timestamp: Date.now(),
+    }
+    let queueUrl;
+    switch (eventType) {
+      case "like":
+        queueUrl = process.env.LIKES_QUEUE_URL;
+        break;
+      case "view":
+        queueUrl = process.env.VIEWS_QUEUE_URL;
+        break;
+      case "subscribe":
+        queueUrl = process.env.SUBSCRIBE_QUEUE_URL;
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid eventType" });
+    }
+    console.log("Received events", event);
+    sendToQueue(queueUrl, event,videoId);
+    res.json({ message: "Received events successfully" });
+  }catch(error){
+    console.error("Error receiving events:", error);
+    res.status(500).json({ error: "Failed to receive events" });
+  }
+}

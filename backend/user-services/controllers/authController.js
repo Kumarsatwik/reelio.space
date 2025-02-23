@@ -15,7 +15,7 @@ export const register = async (req, res) => {
 
     const user = await userModel.create({ email, password, name });
     const token = jwt.sign({ userId: user.email }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
+      expiresIn: "1h",
     });
 
     res.status(201).json({
@@ -63,18 +63,20 @@ export const login = async (req, res) => {
       expiresIn: "1h",
     });
 
-    // Update cookie settings
+    // Update cookie settings with correct options for cross-origin requests
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
-      maxAge: 1 * 60 * 60 * 1000,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 1 * 60 * 60 * 1000, // 1 hour
     });
 
     const { password: _, ...userWithoutPassword } = user;
     res.json({
       message: "Login successful",
-      user: userWithoutPassword,
+      token,
+      user: userWithoutPassword
     });
   } catch (error) {
     console.error("Login error:", error);
