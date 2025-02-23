@@ -18,7 +18,6 @@ export default function VideoCard({
   views,
   uploadDate,
 }: VideoCardProps) {
-  console.log("channelname", channelName);
 
   return (
     <Link href={`/watch/${id}`} className="group">

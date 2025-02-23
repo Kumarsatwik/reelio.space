@@ -34,6 +34,8 @@ export const useAuth = () => {
     onSuccess: (data) => {
       if (data.user && data.token) {
         setUser(data.user, data.token);
+        // Set token cookie
+        document.cookie = `token=${data.token}; path=/; secure; samesite=lax`;
         router.push("/");
         router.refresh();
       }

@@ -1,12 +1,4 @@
 "use client";
-
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
 import { VideoIcon } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
