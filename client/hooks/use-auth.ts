@@ -32,8 +32,8 @@ export const useAuth = () => {
       }
     },
     onSuccess: (data) => {
-      if (data.user) {
-        setUser(data.user);
+      if (data.user && data.token) {
+        setUser(data.user, data.token);
         router.push("/");
         router.refresh();
       }
@@ -43,7 +43,6 @@ export const useAuth = () => {
       throw error;
     },
   });
-
   const signup = useMutation({
     mutationFn: async (credentials: SignupCredentials) => {
       try {
@@ -54,21 +53,19 @@ export const useAuth = () => {
       }
     },
     onSuccess: (data) => {
-      setUser(data.user);
-      router.push("/");
-      router.refresh();
+      if (data.user && data.token) {
+        setUser(data.user, data.token);
+        router.push("/");
+        router.refresh();
+      }
     },
   });
-
   const logout = useMutation({
     mutationFn: async () => {
       try {
         await api.post("/auth/logout");
       } finally {
-        // Always clear local state and cookie
-        setUser(null);
-        document.cookie =
-          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        setUser(null, null);
       }
     },
     onSettled: () => {
@@ -76,7 +73,6 @@ export const useAuth = () => {
       router.refresh();
     },
   });
-
   const updateProfile = useMutation({
     mutationFn: async (data: UpdateProfileData) => {
       try {
@@ -88,11 +84,11 @@ export const useAuth = () => {
     },
     onSuccess: (data) => {
       if (data.user) {
-        setUser(data.user);
+        const currentToken = useAuthStore.getState().token;
+        setUser(data.user, currentToken);
       }
     },
   });
-
   return {
     login: {
       ...login,

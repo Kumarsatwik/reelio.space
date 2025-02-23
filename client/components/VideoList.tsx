@@ -1,9 +1,15 @@
 "use client";
 
-import { useQuery } from '@tanstack/react-query';
-import api from '@/services/api';
-import VideoCard from './VideoCard';
-import Loader from './Loader';
+import { useQuery } from "@tanstack/react-query";
+import api from "@/services/api";
+import VideoCard from "./VideoCard";
+import Loader from "./Loader";
+
+interface User{
+  userId?:string;
+  channelName:string;
+  name?:string;
+}
 
 interface Video {
   videoId: string;
@@ -14,6 +20,7 @@ interface Video {
   createdAt: string;
   thumbnail?: string;
   channelName?: string;
+  user:User;
 }
 
 export default function VideoList() {
@@ -30,9 +37,7 @@ export default function VideoList() {
   });
 
   if (isLoading) {
-    return (
-      <Loader/>
-    );
+    return <Loader />;
   }
 
   if (error) {
@@ -59,7 +64,7 @@ export default function VideoList() {
           id={video.videoId}
           title={video.title}
           thumbnail={video.thumbnail || "/placeholder.svg"}
-          channelName={video.channelName || "Unknown"}
+          channelName={video?.user?.channelName as string || "Unknown"}
           views={0}
           uploadDate={video.createdAt}
         />

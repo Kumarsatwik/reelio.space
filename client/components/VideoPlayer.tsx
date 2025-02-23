@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ThumbsUp, ThumbsDown, Share2, Save } from "lucide-react";
+// import { ThumbsUp, ThumbsDown, Share2, Save } from "lucide-react";
+import Image from "next/image";
 
 import dynamic from "next/dynamic";
 
@@ -31,7 +32,7 @@ export default function VideoPlayer({
   url,
   createdAt,
 }: VideoPlayerProps) {
-  const resolutions = ["Auto","360p", "480p", "720p"];
+  const resolutions = ["Auto", "360p", "480p", "720p"];
 
   const [currentResolution, setCurrentResolution] = useState(resolutions[0]);
   const [currentUrl, setCurrentUrl] = useState(url); // Store the current video URL
@@ -40,14 +41,14 @@ export default function VideoPlayer({
   // Automatically change resolution based on network speed
   const handleResolutionChange = (value: string) => {
     setCurrentResolution(value);
-    
-    if (value === 'Auto') {
+
+    if (value === "Auto") {
       // Reset to master playlist for automatic adaptation
       setCurrentUrl(url);
     } else {
       // Manual resolution selection
-      const baseUrl = url.replace(/\/\d+p\/index\.m3u8$/, '/master.m3u8');
-      const newUrl = baseUrl.replace('master.m3u8', `${value}/index.m3u8`);
+      const baseUrl = url.replace(/\/\d+p\/index\.m3u8$/, "/master.m3u8");
+      const newUrl = baseUrl.replace("master.m3u8", `${value}/index.m3u8`);
       setCurrentUrl(newUrl);
     }
   };
@@ -56,7 +57,7 @@ export default function VideoPlayer({
 
   // Function to detect network speed and adjust resolution
   const detectNetworkSpeed = () => {
-    if (typeof navigator !== 'undefined' && navigator.connection) {
+    if (typeof navigator !== "undefined" && navigator.connection) {
       const connection = navigator.connection as NetworkInformation;
       console.log("connection", connection.effectiveType);
       // Network type (e.g., 'wifi', 'cellular')
@@ -77,12 +78,12 @@ export default function VideoPlayer({
   useEffect(() => {
     detectNetworkSpeed();
     // Add event listener to detect changes in network speed
-    if (typeof navigator !== 'undefined' && navigator.connection) {
+    if (typeof navigator !== "undefined" && navigator.connection) {
       navigator.connection.addEventListener("change", detectNetworkSpeed);
     }
 
     return () => {
-      if (typeof navigator !== 'undefined' && navigator.connection) {
+      if (typeof navigator !== "undefined" && navigator.connection) {
         navigator.connection.removeEventListener("change", detectNetworkSpeed);
       }
     };
@@ -100,7 +101,7 @@ export default function VideoPlayer({
           playing
           onProgress={({ playedSeconds }) => setCurrentTime(playedSeconds)}
           onReady={(player) => {
-            player.seekTo(currentTime, 'seconds');
+            player.seekTo(currentTime, "seconds");
             player.getInternalPlayer()?.play();
           }}
           config={{
@@ -119,7 +120,7 @@ export default function VideoPlayer({
         <h1 className="text-2xl font-bold">{title}</h1>
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500">
-             {new Date(createdAt).toLocaleDateString()}
+            {new Date(createdAt).toLocaleDateString()}
           </div>
           <div className="flex items-center space-x-4">
             {/* <Button variant="ghost" size="sm">
@@ -158,12 +159,18 @@ export default function VideoPlayer({
         </div>
       </div>
       <div className="flex items-center space-x-4 border-t border-b py-4">
-        <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+        <div className="w-12 h-12 bg-gray-200 rounded-full">
+          <Image
+            src="https://avatar.iran.liara.run/public"
+            width={48}
+            height={48}
+            alt="user"
+            style={{ objectFit: "cover", borderRadius: "100%" }}
+          />
+        </div>
         <div>
-          <h2 className="font-bold"></h2>
-          <p className="text-sm text-gray-500">
-            {/* {subscribers.toLocaleString("en-US")} subscribers */}
-          </p>
+          <h2 className="font-bold">test</h2>
+          <p className="text-sm text-gray-500">{"1232"} subscribers</p>
         </div>
         <Button className="ml-auto">Subscribe</Button>
       </div>

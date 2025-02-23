@@ -11,9 +11,12 @@ const api = axios.create({
   },
 });
 
-// Add request interceptor for CORS credentials
+// Add request interceptor for authentication
 api.interceptors.request.use((config) => {
-  config.withCredentials = true;
+  const token = useAuthStore.getState().token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
@@ -21,11 +24,10 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      console.log('401')
       // Clear auth state and cookies
-      useAuthStore.getState().setUser(null);
+      useAuthStore.getState().setUser(null, null);
       removeCookies();
-      
+
       // Call logout endpoint to clear server-side session
       try {
         await api.post("/auth/logout");
