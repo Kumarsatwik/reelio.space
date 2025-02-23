@@ -5,6 +5,8 @@ A scalable video transcoding service built with AWS services that efficiently pr
 ## Architecture Overview
 
 
+![Untitled-2024-07-31-1258(4)](https://github.com/user-attachments/assets/3caf9b42-8c4a-4ef2-b056-303ea796d3e0)
+
 
 ## Flow Description
 
