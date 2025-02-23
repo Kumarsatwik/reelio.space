@@ -3,6 +3,7 @@
 A scalable video transcoding service built with AWS services that efficiently processes and converts videos into multiple resolutions using HLS (HTTP Live Streaming) format.
 
 ## Architecture Overview
+![Uploading image.png…]()
 
 
 
